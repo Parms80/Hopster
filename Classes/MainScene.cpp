@@ -7,11 +7,18 @@
 //
 
 #include "MainScene.h"
-
+#include "GameObject.h"
+#include "Player.h"
+#include "Ball.hpp"
+#include "Block.hpp"
+#include "Level.hpp"
 
 USING_NS_CC;
 
-
+Player* player;
+Ball* ball;
+Block* block;
+Level* level;
 
 // on "init" you need to initialize your instance
 bool MainScene::init()
@@ -24,13 +31,17 @@ bool MainScene::init()
     
     // get visible size of window
     Size visibleSize = Director::getInstance()->getVisibleSize();
-  
-    // add a sprite
-    Sprite* sprite = Sprite::create( "BlueBlob-Normal.png" );
-    sprite->setPosition( Vec2( visibleSize.width / 2, visibleSize.height / 2 ) );
-    // add the sprite as a child to this layer
-    this->addChild( sprite );
     
+    player = new Player(150.0f, 50.0f, "ButtonGreenLong.png");
+    this->addChild(player->sprite);
+    
+    ball = new Ball( visibleSize.width / 2, visibleSize.height / 2 , "SpikeBall1.png");
+    this->addChild(ball->sprite);
+    
+//    block = new Block( visibleSize.width / 2, visibleSize.height / 2 + 100.0f, "ButtonBlue.png");
+//    this->addChild(block->sprite);
+    
+    level = new Level(this);
     
     // done
     return true;
@@ -68,6 +79,11 @@ void MainScene::onEnter()
 
 void MainScene::onExit()
 {
+    delete(player);
+    delete(ball);
+    delete(block);
+    delete(level);
+    
     Super::onExit();
     
     // de-register event listeners
@@ -82,7 +98,7 @@ void MainScene::update( float delta )
 {
     // called once per frame
 //    cocos2d::log( "Update: %f", delta );
-    
+    ball->update();
 }
 
 
@@ -92,6 +108,11 @@ void MainScene::update( float delta )
 void MainScene::onKeyPressed( EventKeyboard::KeyCode keyCode, Event* event )
 {
     cocos2d::log( "Key with keycode %d pressed", keyCode );
+    
+    if (keyCode == EventKeyboard::KeyCode::KEY_LEFT_ARROW)
+    {
+        player->moveLeft();
+    }
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event )
@@ -134,3 +155,4 @@ void MainScene::onMouseScroll( Event *event )
     str += std::to_string(e->getScrollX()) + " Y: " + std::to_string(e->getScrollY());
     cocos2d::log( "%s", str.c_str() );
 }
+
